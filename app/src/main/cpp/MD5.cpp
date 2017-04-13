@@ -1,17 +1,16 @@
 //
-// Created by Duke on 17-4-13.
+// Created by Duke
 //
 
 #include <stdio.h>
-#include <string.h>
 #include "MD5.h"
 
 
-char *strMd5(const char *input, size_t len) {
+std::string strMd5(const char *input, size_t len) {
     MD5_CTX ctx;
     unsigned char md5[16] = {0};
-    char buff[33] = {'\0'};
-    char tmp[3] = {'\0'};
+    char tmp[3] = {0};
+    std::string result;
     int i;
 
     MD5_Init(&ctx);
@@ -22,10 +21,11 @@ char *strMd5(const char *input, size_t len) {
 
     for (i = 0; i < 16; i++) {
         sprintf(tmp, "%02x", md5[i]);
-        strcat(buff, tmp);
+//        strcat(buff, tmp);
+        result.append(tmp);
     }
     //printf("%s\n",buff);
 
 
-    return buff;
+    return result;
 }
