@@ -5,19 +5,26 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
+
+SET(SSL_LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/main/cpp/openssl)
+
+message(openssl-lib目录：${SSL_LIB_PATH})
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
 add_library( # Sets the name of the library.
-             native-lib
+             hhssl
 
              # Sets the library as a shared library.
              SHARED
 
              # Provides a relative path to your source file(s).
-             src/main/cpp/native-lib.cpp )
+             src/main/cpp/NativeSSL.cpp
+             src/main/cpp/MD5.cpp
+             )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -37,8 +44,18 @@ find_library( # Sets the name of the path variable.
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
-                       native-lib
+                       hhssl
 
                        # Links the target library to the log library
                        # included in the NDK.
-                       ${log-lib} )
+                       ${log-lib}
+
+                       ${SSL_LIB_PATH}/lib/libcrypto.a
+                       ${SSL_LIB_PATH}/lib/libssl.a
+
+                       )
+
+
+include_directories(
+                  ${SSL_LIB_PATH}/include
+                  )
