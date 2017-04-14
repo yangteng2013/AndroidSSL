@@ -12,12 +12,14 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
-                cppFlags "-std=c++11 -frtti -fexceptions"
+                cppFlags "-std=c++11 -frtti -fexceptions -DANDROID -fuse-ld=bfd"
+                arguments '-DANDROID_PLATFORM=android-24',
+                        '-DANDROID_TOOLCHAIN=gcc', '-DANDROID_STL=gnustl_static'
             }
         }
 
         ndk {
-//            stl 'stlport_static'
+//            stl 'gnustl_static'
             abiFilters 'armeabi-v7a'
         }
     }

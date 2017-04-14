@@ -2,6 +2,7 @@
 #include <string>
 #include "LogUtil.h"
 #include "MD5.h"
+#include "AES.h"
 
 extern "C" {
 
@@ -41,11 +42,52 @@ jstring getStrMd5(JNIEnv *env, jobject /* this */, jstring inputStr) {
     return result;
 }
 
+jbyteArray aesEncrypt(JNIEnv *env, jobject /* this */, jstring inputStr) {
+    const char *input = env->GetStringUTFChars(inputStr, JNI_FALSE);
+    std::string str;
+    str.append(input);
+    env->ReleaseStringUTFChars(inputStr, input);
+
+
+    unsigned char key[] = "abcdefghijklmnop";
+
+    HH::AES *aes = new HH::AES(key);
+    std::string resultCString = aes->encrypt(str);
+    delete aes;
+
+
+//    jstring result = charToJString(env, resultCString);
+    jbyteArray array = env->NewByteArray(resultCString.size());
+    env->SetByteArrayRegion(array, 0, resultCString.size(), (const jbyte *) resultCString.c_str());
+
+
+    return array;
+}
+
+jstring aesDecrypt(JNIEnv *env, jobject /* this */, jbyteArray inputArray) {
+    jbyte *bBuffer = env->GetByteArrayElements(inputArray, JNI_FALSE);
+    std::string str;
+    str.append((const char *) bBuffer);
+    env->ReleaseByteArrayElements(inputArray, bBuffer, JNI_COMMIT);
+
+    unsigned char key[] = "abcdefghijklmnop";
+    HH::AES *aes = new HH::AES(key);
+    std::string resultCString = aes->decrypt(str);
+    delete aes;
+
+    jstring result = charToJString(env, resultCString);
+
+
+    return result;
+}
+
 
 const char *className = "xyz/openhh/ssl/NativeSSL";
 
 static JNINativeMethod methods[] = {
-        {"getStrMd5", "(Ljava/lang/String;)Ljava/lang/String;", (void *) getStrMd5}
+        {"getStrMd5",  "(Ljava/lang/String;)Ljava/lang/String;", (void *) getStrMd5},
+        {"aesEncrypt", "(Ljava/lang/String;)[B",                 (void *) aesEncrypt},
+        {"aesDecrypt", "([B)Ljava/lang/String;",                 (void *) aesDecrypt}
 };
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {

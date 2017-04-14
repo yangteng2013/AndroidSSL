@@ -24,6 +24,7 @@ add_library( # Sets the name of the library.
              # Provides a relative path to your source file(s).
              src/main/cpp/NativeSSL.cpp
              src/main/cpp/MD5.cpp
+             src/main/cpp/AES.cpp
              )
 
 # Searches for a specified prebuilt library and stores the path as a
@@ -50,8 +51,8 @@ target_link_libraries( # Specifies the target library.
                        # included in the NDK.
                        ${log-lib}
 
-                       ${SSL_LIB_PATH}/lib/libcrypto.a
                        ${SSL_LIB_PATH}/lib/libssl.a
+                       ${SSL_LIB_PATH}/lib/libcrypto.a
 
                        )
 
