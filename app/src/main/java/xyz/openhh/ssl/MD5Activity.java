@@ -2,15 +2,11 @@ package xyz.openhh.ssl;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 
 public class MD5Activity extends AppCompatActivity implements View.OnClickListener {
 
@@ -46,7 +42,11 @@ public class MD5Activity extends AppCompatActivity implements View.OnClickListen
                     calculateResult.append(sBuilder.append(NativeSSL.getStrMd5(calculateInput.getText().toString())));
                 else if (checkId == R.id.rb_aes) {
                     byte[] result = NativeSSL.aesEncrypt(calculateInput.getText().toString());
-                    calculateResult.append(sBuilder.append(NativeSSL.aesDecrypt(result)));
+                    calculateResult.append(sBuilder.append("C++加密，Java解密:").append(AES.decrypt(result)));
+
+                    byte[] result2 = AES.encrypt(calculateInput.getText().toString());
+                    sBuilder.delete( 0, sBuilder.length() );
+                    calculateResult.append(sBuilder.append("\r\nJava加密，C++解密:").append(NativeSSL.aesDecrypt(result2)));
                 }
                 scrollView.fullScroll(ScrollView.FOCUS_DOWN);
                 break;

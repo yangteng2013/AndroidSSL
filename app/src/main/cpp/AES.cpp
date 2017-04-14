@@ -1,6 +1,7 @@
 //
 // Created by Duke
 //参考：https://my.oschina.net/gesuper/blog/174035
+//Evp aes ecb 默认是PKCS5Padding
 //
 
 #include "AES.h"
