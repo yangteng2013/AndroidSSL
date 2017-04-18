@@ -18,6 +18,6 @@ public class NativeSSL {
 
 
     //AES
-    public static native byte[] aesEncrypt(String data);
+    public static native byte[] aesEncrypt(byte[] data);
     public static native String aesDecrypt(byte[] data);
 }

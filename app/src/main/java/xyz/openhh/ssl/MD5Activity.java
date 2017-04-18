@@ -41,16 +41,23 @@ public class MD5Activity extends AppCompatActivity implements View.OnClickListen
                 if (checkId == R.id.rb_md5)
                     calculateResult.append(sBuilder.append(NativeSSL.getStrMd5(calculateInput.getText().toString())));
                 else if (checkId == R.id.rb_aes) {
-                    byte[] result = NativeSSL.aesEncrypt(calculateInput.getText().toString());
-                    calculateResult.append(sBuilder.append("C++加密，Java解密:").append(AES.decrypt(result)));
+                    try {
+                        byte[] oriData = calculateInput.getText().toString().getBytes("UTF-8");
 
-                    byte[] result2 = AES.encrypt(calculateInput.getText().toString());
-                    sBuilder.delete( 0, sBuilder.length() );
-                    calculateResult.append(sBuilder.append("\r\nJava加密，C++解密:").append(NativeSSL.aesDecrypt(result2)));
+                        byte[] result = NativeSSL.aesEncrypt(oriData);
+                        calculateResult.append(sBuilder.append("C++加密，Java解密:").append(AES.decrypt(result)));
+
+                        byte[] result2 = AES.encrypt(calculateInput.getText().toString());
+                        sBuilder.delete(0, sBuilder.length());
+                        calculateResult.append(sBuilder.append("\r\nJava加密，C++解密:").append(NativeSSL.aesDecrypt(result2)));
+                    } catch (Exception e) {
+
+                    }
                 }
                 scrollView.fullScroll(ScrollView.FOCUS_DOWN);
                 break;
             case R.id.btn_clear:
+                calculateResult.setText("结果：");
                 break;
         }
     }

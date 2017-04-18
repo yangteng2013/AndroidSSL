@@ -17,15 +17,38 @@ android {
                         '-DANDROID_TOOLCHAIN=gcc', '-DANDROID_STL=gnustl_static'
             }
         }
-
         ndk {
 //            stl 'gnustl_static'
             abiFilters 'armeabi-v7a'
         }
     }
-    buildTypes {
+    signingConfigs {
+        debug {
+            keyAlias 'jx3'
+            keyPassword 'hh9999'
+            storeFile file('../hh.jks')
+            storePassword 'hh9999'
+        }
         release {
+            keyAlias 'jx3'
+            keyPassword 'hh9999'
+            storeFile file('../hh.jks')
+            storePassword 'hh9999'
+        }
+    }
+    buildTypes {
+        debug {
             minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
+            signingConfig signingConfigs.debug
+
+        }
+        release {
+            minifyEnabled true
+            zipAlignEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -34,10 +57,12 @@ android {
             path "CMakeLists.txt"
         }
     }
+    productFlavors {
+    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
