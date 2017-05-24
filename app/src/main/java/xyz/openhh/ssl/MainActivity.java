@@ -17,6 +17,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        PermissionsManager.requestAllNeedPermissions(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tv.setText(NativeSSL.getSSLVersion());
 
         findViewById(R.id.md5_fun).setOnClickListener(this);
+        findViewById(R.id.digest).setOnClickListener(this);
     }
 
     @Override
@@ -69,7 +73,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.md5_fun:
-                openActivity(this, MD5Activity.class);
+                openActivity(this, AESActivity.class);
+                break;
+            case R.id.digest:
+                openActivity(this, DigestActivity.class);
                 break;
         }
     }

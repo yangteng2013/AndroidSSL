@@ -16,8 +16,11 @@ public class NativeSSL {
 
     public static native String getStrMd5(String inputStr);
 
+    public static native String getFileMd5(String fileName);
+
 
     //AES
     public static native byte[] aesEncrypt(byte[] data);
+
     public static native String aesDecrypt(byte[] data);
 }

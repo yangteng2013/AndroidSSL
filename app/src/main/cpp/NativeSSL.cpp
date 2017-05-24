@@ -42,18 +42,30 @@ jstring getStrMd5(JNIEnv *env, jobject /* this */, jstring inputStr) {
     return result;
 }
 
+jstring getFileMd5(JNIEnv *env, jobject /* this */, jstring fileName) {
+    const char *input = env->GetStringUTFChars(fileName, JNI_FALSE);
+    std::string resultCString = fileMd5(input);
+
+//    jstring result = env->NewStringUTF(resultCString.c_str());
+
+    jstring result = charToJString(env, (char *) resultCString.c_str(), resultCString.size());
+    env->ReleaseStringUTFChars(fileName, input);
+    return result;
+}
+
 jbyteArray aesEncrypt(JNIEnv *env, jobject /* this */, jbyteArray inputArray) {
     jbyte *bBuffer = env->GetByteArrayElements(inputArray, JNI_FALSE);
     unsigned char *in = (unsigned char *) bBuffer;
     size_t inLen = env->GetArrayLength(inputArray);
     unsigned char out[1024];
     memset(out, 0, 1024);
-    size_t outLen;
+    size_t outLen = 1024;
 
 
     unsigned char key[] = "abcdefghijklmnop";
 
     HH::AES *aes = new HH::AES(key);
+//    aes->evp_encrypt(in, inLen, out, &outLen);
     aes->encrypt(in, inLen, out, &outLen);
     delete aes;
 
@@ -73,10 +85,11 @@ jstring aesDecrypt(JNIEnv *env, jobject /* this */, jbyteArray inputArray) {
     size_t inLen = env->GetArrayLength(inputArray);
     unsigned char out[1024];
     memset(out, 0, 1024);
-    size_t outLen;
+    size_t outLen = 1024;
 
     unsigned char key[] = "abcdefghijklmnop";
     HH::AES *aes = new HH::AES(key);
+//    aes->evp_decrypt(in, inLen, out, &outLen);
     aes->decrypt(in, inLen, out, &outLen);
     delete aes;
 
@@ -92,6 +105,7 @@ const char *className = "xyz/openhh/ssl/NativeSSL";
 
 static JNINativeMethod methods[] = {
         {"getStrMd5",  "(Ljava/lang/String;)Ljava/lang/String;", (void *) getStrMd5},
+        {"getFileMd5", "(Ljava/lang/String;)Ljava/lang/String;", (void *) getFileMd5},
         {"aesEncrypt", "([B)[B",                                 (void *) aesEncrypt},
         {"aesDecrypt", "([B)Ljava/lang/String;",                 (void *) aesDecrypt}
 };

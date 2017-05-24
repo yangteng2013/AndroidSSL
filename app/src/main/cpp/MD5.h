@@ -17,4 +17,6 @@ class MD5 {
 
 std::string strMd5(const char *input, size_t len);
 
+std::string fileMd5(const char *filePath);
+
 #endif //ANDROIDSSL_MD5_H

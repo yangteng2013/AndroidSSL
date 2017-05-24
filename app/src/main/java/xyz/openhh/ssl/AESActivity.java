@@ -8,7 +8,7 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class MD5Activity extends AppCompatActivity implements View.OnClickListener {
+public class AESActivity extends AppCompatActivity implements View.OnClickListener {
 
     EditText calculateInput;
     TextView calculateResult;
@@ -19,7 +19,7 @@ public class MD5Activity extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_md5);
+        setContentView(R.layout.activity_aes);
 
 
         findViewById(R.id.md5_calculate).setOnClickListener(this);

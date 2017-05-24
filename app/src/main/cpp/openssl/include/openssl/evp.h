@@ -303,7 +303,7 @@ int (*EVP_CIPHER_meth_get_ctrl(const EVP_CIPHER *cipher))(EVP_CIPHER_CTX *,
 # define         EVP_CTRL_AEAD_TLS1_AAD          0x16
 /* Used by composite AEAD ciphers, no-op in GCM, CCM... */
 # define         EVP_CTRL_AEAD_SET_MAC_KEY       0x17
-/* Set the GCM invocation field, decrypt only */
+/* Set the GCM invocation field, evp_decrypt only */
 # define         EVP_CTRL_GCM_SET_IV_INV         0x18
 
 # define         EVP_CTRL_TLS1_1_MULTIBLOCK_AAD  0x19

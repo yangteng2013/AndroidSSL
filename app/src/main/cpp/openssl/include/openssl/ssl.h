@@ -78,7 +78,7 @@ extern "C" {
 # define SSL_MAX_KEY_ARG_LENGTH                  8
 # define SSL_MAX_MASTER_KEY_LENGTH               48
 
-/* The maximum number of encrypt/decrypt pipelines we can support */
+/* The maximum number of evp_encrypt/evp_decrypt pipelines we can support */
 # define SSL_MAX_PIPELINES  32
 
 /* text strings for the ciphers */

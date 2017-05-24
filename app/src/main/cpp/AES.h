@@ -34,7 +34,7 @@ unsigned char decryptedtext[64];
 
 extern "C" {
 //#include "openssl/aes.h"
-#include <openssl/evp.h>
+//#include <openssl/evp.h>
 };
 
 #include "LogUtil.h"
@@ -48,8 +48,11 @@ namespace HH {
         ~AES();
 
         void encrypt(unsigned char *in, size_t inLen, unsigned char *out, size_t *outLen);
-
         void decrypt(unsigned char *in, size_t inLen, unsigned char *out, size_t *outLen);
+
+//        void evp_encrypt(unsigned char *in, size_t inLen, unsigned char *out, size_t *outLen);
+//
+//        void evp_decrypt(unsigned char *in, size_t inLen, unsigned char *out, size_t *outLen);
 
     private:
         const unsigned char *key;
