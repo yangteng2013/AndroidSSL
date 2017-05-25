@@ -21,13 +21,16 @@ _ANDROID_NDK="android-ndk-r9"
 # Set _ANDROID_EABI to the EABI you want to use. You can find the
 # list in $ANDROID_NDK_ROOT/toolchains. This value is always used.
 # _ANDROID_EABI="x86-4.6"
-# _ANDROID_EABI="arm-linux-androideabi-4.6"
+# _ANDROID_EABI="arm-linux-androideabi-4.6"  arm-linux-androideabi-4.9  aarch64-linux-android-4.9
 _ANDROID_EABI="arm-linux-androideabi-4.9"
+#_ANDROID_EABI="aarch64-linux-android-4.9"
 
 # Set _ANDROID_ARCH to the architecture you are building for.
 # This value is always used.
 # _ANDROID_ARCH=arch-x86
+#arch-arm64 arch-arm
 _ANDROID_ARCH=arch-arm
+#_ANDROID_ARCH=arch-arm64
 
 # Set _ANDROID_API to the API you want to use. You should set it
 # to one of: android-14, android-9, android-8, android-14, android-5
@@ -118,12 +121,15 @@ if [ -z "$ANDROID_TOOLCHAIN" ] || [ ! -d "$ANDROID_TOOLCHAIN" ]; then
 fi
 
 case $_ANDROID_ARCH in
-	arch-arm)	  
+	arch-arm)
       ANDROID_TOOLS="arm-linux-androideabi-gcc arm-linux-androideabi-ranlib arm-linux-androideabi-ld"
 	  ;;
-	arch-x86)	  
+	arch-x86)
       ANDROID_TOOLS="i686-linux-android-gcc i686-linux-android-ranlib i686-linux-android-ld"
-	  ;;	  
+	  ;;
+	arch-arm64)
+      ANDROID_TOOLS="aarch64-linux-android-gcc aarch64-linux-android-ranlib aarch64-linux-android-ld"
+	  ;;
 	*)
 	  echo "ERROR ERROR ERROR"
 	  ;;
@@ -206,6 +212,14 @@ if [ "$_ANDROID_ARCH" == "arch-x86" ]; then
 	export CROSS_COMPILE="i686-linux-android-"
 fi
 
+if [ "$_ANDROID_ARCH" == "arch-arm64" ]; then
+	export MACHINE=armv7
+	export RELEASE=2.6.37
+	export SYSTEM=android
+	export ARCH=arm64
+	export CROSS_COMPILE="aarch64-linux-android-"
+fi
+
 # For the Android toolchain
 # https://android.googlesource.com/platform/ndk/+/ics-mr0/docs/STANDALONE-TOOLCHAIN.html
 export ANDROID_SYSROOT="$ANDROID_NDK_ROOT/platforms/$_ANDROID_API/$_ANDROID_ARCH"
@@ -232,6 +246,13 @@ if [ ! -z "$VERBOSE" ] && [ "$VERBOSE" != "0" ]; then
   echo "ANDROID_DEV: $ANDROID_DEV"
 fi
 
+xCFLAGS=""
+configure_platform=""
+if [ "$_ANDROID_ARCH" == "arch-arm64" ]; then
+	configure_platform="linux-generic64 -DB_ENDIAN"
+    xCFLAGS="-DSHARED_EXTENSION=.so -fPIC -DOPENSSL_PIC -DDSO_DLFCN -DHAVE_DLFCN_H -mandroid -I$ANDROID_DEV/include -B$ANDROID_DEV/lib -O3 -fomit-frame-pointer -Wall"
+fi
+
 
 
 #以下为编译部分
@@ -239,9 +260,26 @@ cd openssl-1.1.0e
 
 #perl -pi -e 's/install: all install_docs install_sw/install: install_docs install_sw/g' Makefile.org
 ori_dir=$(cd "$(dirname "$0")"; pwd)
-echo "输出目录：$ori_dir/out_dir"
+
+build_out_dir=$ori_dir/../out_dir
+
+echo "输出目录：$build_out_dir"
+
 make clean
-./config shared no-ssl2 no-ssl3 no-comp no-hw no-engine --openssldir=$ori_dir/out_dir --prefix=$ori_dir/out_dir
+
+if [ "$_ANDROID_ARCH" == "arch-arm64" ]; then
+    ./Configure shared no-ssl2 no-ssl3 no-comp no-hw no-engine --openssldir=$build_out_dir --prefix=$build_out_dir $configure_platform $xCFLAGS
+elif [ "$_ANDROID_ARCH" == "arch-arm" ]; then
+    ./config shared no-ssl2 no-ssl3 no-comp no-hw no-engine --openssldir=$build_out_dir --prefix=$build_out_dir
+fi
+
+
 make depend
 make all
-sudo -E make install CC=$ANDROID_TOOLCHAIN/arm-linux-androideabi-gcc RANLIB=$ANDROID_TOOLCHAIN/arm-linux-androideabi-ranlib
+
+
+if [ "$_ANDROID_ARCH" == "arch-arm64" ]; then
+    sudo -E make install CC=$ANDROID_TOOLCHAIN/aarch64-linux-android-gcc RANLIB=$ANDROID_TOOLCHAIN/aarch64-linux-android-ranlib
+elif [ "$_ANDROID_ARCH" == "arch-arm" ]; then
+    sudo -E make install CC=$ANDROID_TOOLCHAIN/arm-linux-androideabi-gcc RANLIB=$ANDROID_TOOLCHAIN/arm-linux-androideabi-ranlib
+fi
